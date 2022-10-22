@@ -73,6 +73,10 @@ p{
   background:purple;
 }
 
+.cell.dragstart, .cell.dragover{
+  opacity:40%
+}
+
 
 
 

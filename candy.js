@@ -18,7 +18,7 @@ function initialiseBoard(){
       const newcellback = document.createElement("div");
       //console.log("boardElem  ", boardElem)
       //console.log("newcellback", newcellback)
-      console.log(r, c);
+      //console.log(r, c);
 
       // make it a cell-back
       newcellback.classList.add("cell-back");
@@ -47,9 +47,16 @@ function initialiseBoard(){
       newcell.dataset.col = c;
       newcell.dataset.color = cellcolor;
 
+      // make the newcell draggable
+      //newcell.setAttribute("draggable", false);
+      
       // set up event listeners for this cell
-      newcell.addEventListener("mouseover", showDetails);
-      newcell.addEventListener("mouseout", clearDetails);
+      newcell.addEventListener("mouseover", overDrag);
+      newcell.addEventListener("mouseout", overDragEnd);
+      newcell.addEventListener("mousedown", startDrag);
+      newcell.addEventListener("mouseup", endDrag);
+      //newcell.addEventListener("dragstart", startDrag);
+      //newcell.addEventListener("dragend", endDrag);
 
       // add this cell to the current row of the board array
       boardRow.push(newcell);
@@ -71,6 +78,8 @@ function showDetails(e){
   document.getElementById("details-col").innerHTML = cellback.dataset.col;
 
   document.getElementById("details-color").innerHTML = cellback.dataset.color;
+
+    
 }
 
 function clearDetails(e){
@@ -92,4 +101,73 @@ function getColor() {
     const item = colors[rIndex];
 
     return item;
+}
+
+
+/* ********************************** */
+/* Dragging variables and functions   */
+/* ********************************** */
+
+var startcell=null;
+var endcell=null;
+
+// click on a cell and start the drag
+function startDrag(e){
+  if (startcell){
+    startcell.classList.remove("dragstart");  
+  }
+  if (endcell){
+    endcell.classList.remove("dragstart");  
+    endcell=null;
+  }
+  
+  startcell = e.target;
+  startcell.classList.add("dragstart");
+  console.log("start", startcell);
+
+
+
+  document.getElementById("details-row").innerHTML = startcell.dataset.row;
+
+  document.getElementById("details-col").innerHTML = startcell.dataset.col;
+
+  document.getElementById("details-color").innerHTML = "";
+
+  document.getElementById("details-status").innerHTML = "dragging";
+
+}
+
+// make a cell more transparent when moving over it
+// and dragging has started
+function overDrag(e){
+  if (startcell){
+    e.target.classList.add("dragover");  
+  }
+}
+
+// set cell to normal opacity when the mouse leaves it
+function overDragEnd(e){
+  e.target.classList.remove("dragover");  
+}
+
+
+function endDrag(e){
+  e.preventDefault();
+  endcell = e.target;
+
+  
+  console.log("end", endcell);
+
+  document.getElementById("details-row").innerHTML = endcell.dataset.row;
+
+  document.getElementById("details-col").innerHTML = endcell.dataset.col;
+
+  document.getElementById("details-color").innerHTML = "";
+
+  document.getElementById("details-status").innerHTML = "end drag";
+
+  // clear the dragging event
+  startcell.classList.remove("dragstart");
+  startcell = null;
+  endcell.classList.remove("dragover");
 }
