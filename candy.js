@@ -113,6 +113,7 @@ var endcell = null;
 
 // click on a cell and start the drag
 function startDrag(e) {
+  e.preventDefault();
   if (startcell) {
     startcell.classList.remove("dragstart");
   }
@@ -123,7 +124,7 @@ function startDrag(e) {
 
   startcell = e.target;
   startcell.classList.add("dragstart");
-  //console.log("start", startcell);
+  console.log("start", startcell.dataset.row, startcell.dataset.col);
 
 
 
@@ -140,9 +141,11 @@ function startDrag(e) {
 // make a cell more transparent when moving over it
 // and dragging has started
 function overDrag(e) {
+  e.preventDefault();
   const overcell = e.target;
 
   if (startcell) {
+    console.log("over", overcell.dataset.row, overcell.dataset.col);
     if (isValidSwap(startcell, overcell)) {
       overcell.classList.add("dragover");
     }
@@ -151,6 +154,7 @@ function overDrag(e) {
 
 // set cell to normal opacity when the mouse leaves it
 function overDragEnd(e) {
+  e.preventDefault();
   e.target.classList.remove("dragover");
 }
 
@@ -159,10 +163,10 @@ function endDrag(e) {
   e.preventDefault();
   endcell = e.target;
 
-  if (isValidSwap(startcell, endcell))
-  {
+  if (isValidSwap(startcell, endcell)) {
     // only carry out swap if it is a valid move.
     swapCells(startcell, endcell);
+    console.log("swap")
   }
   //console.log("end", endcell);
   //document.getElementById("details-row").innerHTML = endcell.dataset.row;
@@ -174,6 +178,7 @@ function endDrag(e) {
   startcell.classList.remove("dragstart");
   startcell = null;
   endcell.classList.remove("dragover");
+  console.log("end")
 }
 
 // return true if the two cell elements are adjacent
@@ -182,17 +187,17 @@ function isValidSwap(cell1, cell2) {
   var hmove = Math.abs(cell2.dataset.row - cell1.dataset.row);
   var vmove = Math.abs(cell2.dataset.col - cell1.dataset.col);
 
-  var validhmove = (hmove==1)&&(vmove==0);
-  var validvmove = (vmove==1)&&(hmove==0);
+  var validhmove = (hmove == 1) && (vmove == 0);
+  var validvmove = (vmove == 1) && (hmove == 0);
 
-  return (validhmove || validvmove );
+  return (validhmove || validvmove);
 
 }
 
 // swap the two cells
 // just need to change the color data and associated class of
 // the cells
-function swapCells(cell1, cell2){
+function swapCells(cell1, cell2) {
   var color1 = cell1.dataset.color;
   var color2 = cell2.dataset.color;
 
@@ -201,10 +206,10 @@ function swapCells(cell1, cell2){
   cell1.classList.remove(color1);
   cell1.classList.add(color2);
 
-  
+
   // replace color of cell2 with color1
   cell2.dataset.color = color1;
   cell2.classList.remove(color2);
   cell2.classList.add(color1);
-  
+
 }
